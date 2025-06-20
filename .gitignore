@@ -1,0 +1,8 @@
+.vscode
+.devcontainer
+.git
+cleaned_standby_data.csv
+flights.json
+passrider_scraper.ipynb
+secrets.txt
+venv

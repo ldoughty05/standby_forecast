@@ -4,7 +4,7 @@
 
 -- CREATE TABLE airports (
 --     id SERIAL PRIMARY KEY,
---     name TEXT NOT NULL,
+--     name TEXT,
 --     code VARCHAR(10) UNIQUE NOT NULL
 -- );
 
@@ -48,7 +48,7 @@ SELECT DISTINCT destination FROM passrider_data_staging
 ON CONFLICT (code) DO NOTHING;
 
 -- Creates a new rule preventing duplicate flights 
-CREATE UNIQUE INDEX unique_flight ON flights(origin_airport_id, destination_airport_id, scheduled_departure_datetime);
+-- CREATE UNIQUE INDEX unique_flight ON flights(origin_airport_id, destination_airport_id, scheduled_departure_datetime);
 
 INSERT INTO flights (origin_airport_id, destination_airport_id, scheduled_departure_datetime)
 SELECT

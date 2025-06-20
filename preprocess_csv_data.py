@@ -1,7 +1,12 @@
 import pandas as pd
+try:
+  already_loaded_lines_count = pd.read_csv("cleaned_standby_data.csv").shape[0]
+  data = pd.read_csv("standby_data.csv", skiprows=range(1, already_loaded_lines_count + 1))
+except:
+  data = pd.read_csv("standby_data.csv")
 
-already_loaded_lines_count = pd.read_csv("cleaned_standby_data.csv").shape[0]
-data = pd.read_csv("standby_data.csv", skiprows=range(1, already_loaded_lines_count + 1))
+
+
 departure_date = data["Departure Date"]
 departure_time = data["Departure Time"]
 record_date = data["Record Date"]

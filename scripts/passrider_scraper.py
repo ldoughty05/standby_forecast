@@ -14,7 +14,7 @@ import csv
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
 
-def load_secrets(filepath='secrets.txt'):
+def load_secrets(filepath="secrets.txt"):
   secrets = {}
   with open(filepath, 'r') as file:
     for line in file:
@@ -180,7 +180,7 @@ for flight in search_flights_results:
   departure_date = flight_info["DepartureDate"]
   departure_time = flight_info["DepartureTime"]
   available = flight_info["Available"]["Total"]
-  standby = flight_info["PS"]["Total"]
+  standby = flight_info["SA"]["Total"]
   capacity = flight_info["Capacity"]["Total"]
 
   record_datetime = datetime.now()
@@ -197,7 +197,7 @@ for flight in search_flights_results:
   ])
 
 
-with open('standby_data.csv', 'a', newline='') as csvfile:
+with open('/data/standby_data.csv', 'a', newline='') as csvfile:
   writer = csv.writer(csvfile)
   for row in csv_rows:
     writer.writerow(row)

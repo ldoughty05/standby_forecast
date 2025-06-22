@@ -6,3 +6,4 @@ flights.json
 passrider_scraper.ipynb
 secrets.txt
 venv
+*.png

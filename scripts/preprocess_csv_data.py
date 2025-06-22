@@ -1,9 +1,9 @@
 import pandas as pd
 try:
-  already_loaded_lines_count = pd.read_csv("cleaned_standby_data.csv").shape[0]
-  data = pd.read_csv("standby_data.csv", skiprows=range(1, already_loaded_lines_count + 1))
+  already_loaded_lines_count = pd.read_csv("/data/cleaned_standby_data.csv").shape[0]
+  data = pd.read_csv("/data/standby_data.csv", skiprows=range(1, already_loaded_lines_count + 1))
 except:
-  data = pd.read_csv("standby_data.csv")
+  data = pd.read_csv("/data/standby_data.csv")
 
 
 
@@ -34,4 +34,4 @@ cleaned_data = pd.DataFrame({
 "total_capacity": data["Capacity"],
 })
 
-cleaned_data.to_csv("cleaned_standby_data.csv", index=False)
+cleaned_data.to_csv("/data/cleaned_standby_data.csv", index=False)

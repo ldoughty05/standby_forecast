@@ -28,13 +28,14 @@ psql -h localhost -U postgres -d standby_data -f init_standby_data_db.sql
 ```
 
 # send file to tmp
-so I can run the sql script from local
+so I can run the sql script from local.
+Ubuntu POV
 ```{bash}
 cp init_standby_data_db.sql /tmp/
 ```
 
-# open postgres CLI (in docker container)
-this worked once but not the second time
+# open postgres CLI (from Ubuntu)
+Useful for uploading csv data to staging
 ```{bash}
 psql -h localhost -U postgres -d standby_data
 ```
@@ -46,6 +47,7 @@ docker compose up -d
 ```
 
 # enter docker shell then open postgres CLI
+Container POV
 ```{bash}
 docker exec -it pg-standby bash
 psql -U postgres -d standby_data
@@ -54,6 +56,6 @@ psql -U postgres -d standby_data
 # upload csv data to staging area
 done locally but sent to the postgres server in the docker container
 ```{sql}
-\copy passrider_data_staging FROM '/full/path/to/cleaned_flight_data.csv' DELIMITER ',' CSV HEADER;
+\copy passrider_data_staging FROM 'data/cleaned_standby_data.csv' DELIMITER ',' CSV HEADER;
 ```
 

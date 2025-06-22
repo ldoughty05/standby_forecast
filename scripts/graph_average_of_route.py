@@ -8,7 +8,7 @@ import os
 DB_NAME = os.getenv("POSTGRES_DB")
 USER = os.getenv("POSTGRES_USER")
 PASSWORD = os.getenv("POSTGRES_PASSWORD")
-DEFAULT_TIMESPAN = (3600 * 24 * 14) # two weeks
+DEFAULT_TIMESPAN = pd.Timedelta(days=14)
 
 parser = argparse.ArgumentParser(description="Plot standby availability over time")
 parser.add_argument("--origin", required=True, help="airport code of the flight origin")
@@ -49,14 +49,16 @@ ORDER BY hours_before_departure DESC;
 data = pd.read_sql(query, db_connection, params=(origin, destination, start_datetime, end_datetime))
 db_connection.close()
 
+print(data)
+
 plt.figure(figsize=(10, 5))
-plt.plot(data["hours_before_departure"], data["seats_available"], marker='o')
+plt.plot(data["hours_before_departure"], data["avg_available_seats"], marker='o')
 # plt.gca().invert_xaxis()
-plt.ylim(0, 10)
+plt.ylim(0, 20)
 plt.xlim(0, 168)
 plt.title(f"Average Seat Availability From {origin} to {destination}")
 plt.xlabel("Hours Before Departure")
 plt.ylabel("Average Available Seats")
 plt.grid(True)
 plt.tight_layout()
-plt.savefig(f"/data/average_availability_{origin}_{destination}_{start_datetime}_{end_datetime}.png")
+plt.savefig(f"data/average_availability_{origin}_{destination}_{start_datetime}_{end_datetime}.png")

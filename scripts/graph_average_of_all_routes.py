@@ -11,17 +11,12 @@ PASSWORD = os.getenv("POSTGRES_PASSWORD")
 DEFAULT_TIMESPAN = pd.Timedelta(days=30)
 
 parser = argparse.ArgumentParser(description="Plot standby availability over time")
-parser.add_argument("--origin", required=True, help="airport code of the flight origin")
-parser.add_argument("--destination", required=True, help="airport code of the flight destinatation")
 parser.add_argument("--start_datetime", required=False, default=pd.Timestamp.now() - DEFAULT_TIMESPAN, help="starting datetime for the span of time to search for flight availability data")
 parser.add_argument("--end_datetime", required=False, default=pd.Timestamp.now(), help="ending datetime for the span of time to search for flight availability data")
 parser.add_argument("--bucket_mode", required=False, choices=["hourly", "fib"], default="hourly", help="Mode in which to bucket sample data. By the hour or fibonacci sequence.")
 
 
-
 args = parser.parse_args()
-origin = args.origin
-destination = args.destination
 start_datetime = args.start_datetime
 end_datetime = args.end_datetime
 bucket_mode = args.bucket_mode
@@ -40,11 +35,8 @@ SELECT
   AVG(r.seats_available) AS avg_available_seats
 FROM readings r
 JOIN flights f ON r.flight_id = f.id
-JOIN airports origin ON f.origin_airport_id = origin.id
-JOIN airports destination ON f.destination_airport_id = destination.id
-WHERE origin.code = %s
-  AND destination.code = %s
-  AND f.scheduled_departure_datetime BETWEEN %s AND %s
+WHERE f.scheduled_departure_datetime BETWEEN %s AND %s
+  AND r.total_capacity = 50
 GROUP BY hours_before_departure
 ORDER BY hours_before_departure DESC;
 """
@@ -56,11 +48,8 @@ WITH with_hours AS (
     FLOOR(EXTRACT(EPOCH FROM (f.scheduled_departure_datetime - r.record_datetime)) / 3600) AS hours_before_departure
   FROM readings r
   JOIN flights f ON r.flight_id = f.id
-  JOIN airports origin ON f.origin_airport_id = origin.id
-  JOIN airports destination ON f.destination_airport_id = destination.id
-  WHERE origin.code = %s
-    AND destination.code = %s
-    AND f.scheduled_departure_datetime BETWEEN %s AND %s
+  WHERE f.scheduled_departure_datetime BETWEEN %s AND %s
+    AND r.total_capacity = 50
 )
 
 SELECT
@@ -92,7 +81,7 @@ else:
   print("bucket_mode: hourly")
   query = query_hourly
 
-data = pd.read_sql(query, db_connection, params=(origin, destination, start_datetime, end_datetime))
+data = pd.read_sql(query, db_connection, params=(start_datetime, end_datetime))
 db_connection.close()
 
 plt.figure(figsize=(10, 5))
@@ -103,11 +92,10 @@ else:
   plt.plot(data["hours_before_departure"], data["avg_available_seats"], marker='o')
 
 # plt.gca().invert_xaxis()
-plt.ylim(-5, 20)
 plt.xlim(0, 168)
-plt.title(f"Average Seat Availability From {origin} to {destination}")
+plt.title(f"Average Seat Availability of flights with a capacity of 50")
 plt.xlabel("Hours Before Departure")
 plt.ylabel("Average Available Seats")
 plt.grid(True)
 plt.tight_layout()
-plt.savefig(f"data/average_availability_{origin}_{destination}_{bucket_mode}_{start_datetime}_{end_datetime}.png")
+plt.savefig(f"data/average_availability_AllFlights_50Capacity_{bucket_mode}_{start_datetime}_{end_datetime}.png")

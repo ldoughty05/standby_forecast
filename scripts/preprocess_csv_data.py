@@ -1,13 +1,7 @@
 import pandas as pd
 import os
-try:
-  print(os.getcwd())
-  already_loaded_lines_count = pd.read_csv("data/cleaned_standby_data.csv").shape[0]
-  data = pd.read_csv("data/standby_data.csv", skiprows=range(1, already_loaded_lines_count + 1))
-except:
-  data = pd.read_csv("data/standby_data.csv")
 
-
+data = pd.read_csv("data/standby_data.csv")
 
 departure_date = data["Departure Date"]
 departure_time = data["Departure Time"]
@@ -36,5 +30,5 @@ cleaned_data = pd.DataFrame({
 "total_capacity": data["Capacity"],
 })
 
-cleaned_data.to_csv("data/cleaned_standby_data.csv", index=False)
+cleaned_data.to_csv(f"data/cleaned_standby_data_{len(cleaned_data)}.csv", index=False)
 print("done")

@@ -197,7 +197,7 @@ for flight in search_flights_results:
   ])
 
 
-with open('/data/standby_data.csv', 'a', newline='') as csvfile:
+with open('data/standby_data.csv', 'a', newline='') as csvfile:
   writer = csv.writer(csvfile)
   for row in csv_rows:
     writer.writerow(row)
